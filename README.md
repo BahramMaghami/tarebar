@@ -1,4 +1,4 @@
-﻿# تره‌بار — MVP بازار میوه
+# تره‌بار — MVP بازار میوه
 
 رابط فارسی و RTL، جستجو و دسته‌بندی، نمایش قیمت به تومان، ثبت‌نام و ورود Gmail + رمز، پنل مدیر برای افزودن/ویرایش/حذف، و صفحه موقت `/purchase`.
 
@@ -37,3 +37,7 @@ npm.cmd run build
 ```
 
 راهنمای طراحی محلی: `.agents/skills/ui-ux-pro-max/SKILL.md`؛ سبک ساده، رنگ سبز، کنترل‌های قابل استفاده با کیبورد و چیدمان واکنش‌گرا.
+
+## PostgreSQL deployment update
+
+The active provider is now PostgreSQL (Neon). Set DATABASE_URL in .env and Vercel. Run npm run db:generate, npm run db:migrate, and npm run db:seed. PostgreSQL migrations live in prisma/postgres-migrations; prisma/migrations contains historical SQLite migrations and is not used. Local SQLite setup instructions above are superseded. Admin seed requires a Gmail address and password of at least 12 characters.

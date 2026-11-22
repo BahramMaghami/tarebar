@@ -3,7 +3,7 @@ generator client {
   output = "../generated/prisma"
 }
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
 }
 model Fruit {
   id Int @id @default(autoincrement())

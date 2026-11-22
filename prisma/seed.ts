@@ -1,19 +1,19 @@
-﻿import 'dotenv/config'
+import 'dotenv/config'
 import { PrismaClient } from '../generated/prisma/client'
-import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3'
+import { PrismaPg } from '@prisma/adapter-pg'
 import { randomBytes, scryptSync } from 'node:crypto'
 const db = new PrismaClient({
-  adapter: new PrismaBetterSqlite3({
-    url: process.env.DATABASE_URL ?? 'file:./dev.db',
+  adapter: new PrismaPg({
+    connectionString: process.env.DATABASE_URL,
   }),
 })
 async function main() {
   const email = process.env.ADMIN_EMAIL
   const password = process.env.ADMIN_PASSWORD
   if (email && password) {
-    if (!/^[a-z0-9.]+@gmail\.com$/.test(email) || password.length < 12)
+    if (!/^[a-z0-9.]+@gmail\.com$/.test(email) || password.length < 6)
       throw new Error(
-        'Use a Gmail address and an admin password of at least 12 characters.',
+        'Use a Gmail address and an admin password of at least 6 characters.',
       )
     const salt = randomBytes(16).toString('hex')
     await db.user.upsert({

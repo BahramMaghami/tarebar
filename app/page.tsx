@@ -1,6 +1,161 @@
-﻿import { db } from '@/lib/db';
-import { currentUser } from '@/lib/auth';
-import Link from 'next/link';
-import { ArrowUpLeft, Leaf, Sprout, Tag } from 'lucide-react';
-export const dynamic = 'force-dynamic';
-export default async function Home({searchParams}:{searchParams:Promise<{q?:string;category?:string}>}) { const query=await searchParams; const [fruits,user]=await Promise.all([db.fruit.findMany({where:{name:{contains:query.q??''},...(query.category?{category:query.category}:{})},orderBy:{id:'desc'}}),currentUser()]); return <main id="main"><section className="hero"><div><span className="eyebrow"><span className="dot"/> تازه از دل طبیعت</span><h1>حال خوب،<br/>از <em>تازگی</em> شروع می‌شود.</h1><p>میوه‌های رنگارنگ فصل را ببینید، قیمت‌ها را مقایسه کنید<br/>و با خیال راحت انتخاب کنید.</p><a className="button" href="#market">گشتی در بازار <ArrowUpLeft size={19}/></a><div className="hero-note"><Leaf size={18}/> انتخاب تازه، قیمت روشن، خرید آسان</div></div><div className="hero-image"><img src="https://images.unsplash.com/photo-1619566636858-adf3ef46400b?w=1100&auto=format&fit=crop&q=85" alt="مجموعه‌ای از میوه‌های تازه و رنگارنگ"/><span className="floating"><Sprout/> طعم واقعی طبیعت<small>رنگ و تازگی برای هر روز شما</small></span></div></section><section className="benefits"><span><Sprout/> تازه‌های فصل<small>انتخابی از رنگ و طعم</small></span><span><Tag/> قیمت‌های شفاف<small>مقایسه ساده، انتخاب بهتر</small></span><span><Leaf/> یک بازار همیشه در دسترس<small>مشاهده محصولات در هر زمان</small></span></section><section id="market"><div className="section-title"><div><span className="eyebrow">ویترین امروز</span><h2>تازه‌های بازار</h2></div>{user?.role==='ADMIN'?<Link className="outline" href="/admin">مدیریت محصولات</Link>:<span className="muted">قیمت هر کیلوگرم به تومان</span>}</div><form className="filters"><label className="search"><span className="sr-only">جستجوی میوه</span><input name="q" placeholder="دنبال چه میوه‌ای می‌گردید؟" defaultValue={query.q}/></label><select name="category" aria-label="دسته‌بندی" defaultValue={query.category??''}><option value="">همه میوه‌ها</option>{['میوه فصل','مرکبات','میوه استوایی'].map(c=><option key={c}>{c}</option>)}</select><button className="button">جستجو</button><Link className="reset" href="/">نمایش همه</Link></form><div className="grid">{fruits.map(f=><article className="card" key={f.id}><div className="photo"><img src={f.image} alt={f.name} loading="lazy" width="400" height="300"/><span className="badge">{f.available?'موجود در بازار':'ناموجود'}</span></div><div className="card-body"><small>{f.category}</small><h3>{f.name}</h3><div className="price-row"><div><strong>{f.price.toLocaleString('fa-IR')}</strong> <small>تومان / کیلو</small></div>{f.available?<Link className="buy" href="/purchase" aria-label={`خرید ${f.name}`}><ArrowUpLeft size={20}/></Link>:<span className="muted">به‌زودی</span>}</div></div></article>)}</div>{!fruits.length&&<div className="empty">محصولی پیدا نشد. عبارت یا دسته‌بندی دیگری را امتحان کنید.</div>}</section><section className="banner"><div><h2>یک قدم تا انتخاب تازه‌تر</h2><p>بازار را ببینید؛ خرید آنلاین هم به‌زودی به جمع ما اضافه می‌شود.</p></div><Link className="button" href="/purchase">رفتن به خرید <ArrowUpLeft size={18}/></Link></section></main> }
+﻿import { db } from '@/lib/db'
+import { currentUser } from '@/lib/auth'
+import Link from 'next/link'
+import { ArrowUpLeft, Leaf, Sprout, Tag } from 'lucide-react'
+export const dynamic = 'force-dynamic'
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string; category?: string }>
+}) {
+  const query = await searchParams
+  const [fruits, user] = await Promise.all([
+    db.fruit.findMany({
+      where: {
+        name: { contains: query.q ?? '' },
+        ...(query.category ? { category: query.category } : {}),
+      },
+      orderBy: { id: 'desc' },
+    }),
+    currentUser(),
+  ])
+  return (
+    <main id="main">
+      <section className="hero">
+        <div>
+          <span className="eyebrow">
+            <span className="dot" /> تازه از دل طبیعت
+          </span>
+          <h1>
+            حال خوب،
+            <br />
+            از <em>تازگی</em> شروع می‌شود.
+          </h1>
+          <p>
+            میوه‌های رنگارنگ فصل را ببینید، قیمت‌ها را مقایسه کنید
+            <br />و با خیال راحت انتخاب کنید.
+          </p>
+          <a className="button" href="#market">
+            گشتی در بازار <ArrowUpLeft size={19} />
+          </a>
+          <div className="hero-note">
+            <Leaf size={18} /> انتخاب تازه، قیمت روشن، خرید آسان
+          </div>
+        </div>
+        <div className="hero-image">
+          <img
+            src="https://images.unsplash.com/photo-1619566636858-adf3ef46400b?w=1100&auto=format&fit=crop&q=85"
+            alt="مجموعه‌ای از میوه‌های تازه و رنگارنگ"
+          />
+          <span className="floating">
+            <Sprout /> طعم واقعی طبیعت<small>رنگ و تازگی برای هر روز شما</small>
+          </span>
+        </div>
+      </section>
+      <section className="benefits">
+        <span>
+          <Sprout /> تازه‌های فصل<small>انتخابی از رنگ و طعم</small>
+        </span>
+        <span>
+          <Tag /> قیمت‌های شفاف<small>مقایسه ساده، انتخاب بهتر</small>
+        </span>
+        <span>
+          <Leaf /> یک بازار همیشه در دسترس
+          <small>مشاهده محصولات در هر زمان</small>
+        </span>
+      </section>
+      <section id="market">
+        <div className="section-title">
+          <div>
+            <span className="eyebrow">ویترین امروز</span>
+            <h2>تازه‌های بازار</h2>
+          </div>
+          {user?.role === 'ADMIN' ? (
+            <Link className="outline" href="/admin">
+              مدیریت محصولات
+            </Link>
+          ) : (
+            <span className="muted">قیمت هر کیلوگرم به تومان</span>
+          )}
+        </div>
+        <form className="filters">
+          <label className="search">
+            <span className="sr-only">جستجوی میوه</span>
+            <input
+              name="q"
+              placeholder="دنبال چه میوه‌ای می‌گردید؟"
+              defaultValue={query.q}
+            />
+          </label>
+          <select
+            name="category"
+            aria-label="دسته‌بندی"
+            defaultValue={query.category ?? ''}
+          >
+            <option value="">همه میوه‌ها</option>
+            {['میوه فصل', 'مرکبات', 'میوه استوایی'].map((c) => (
+              <option key={c}>{c}</option>
+            ))}
+          </select>
+          <button className="button">جستجو</button>
+          <Link className="reset" href="/">
+            نمایش همه
+          </Link>
+        </form>
+        <div className="grid">
+          {fruits.map((f) => (
+            <article className="card" key={f.id}>
+              <div className="photo">
+                <img
+                  src={f.image}
+                  alt={f.name}
+                  loading="lazy"
+                  width="400"
+                  height="300"
+                />
+                <span className="badge">
+                  {f.available ? 'موجود در بازار' : 'ناموجود'}
+                </span>
+              </div>
+              <div className="card-body">
+                <small>{f.category}</small>
+                <h3>{f.name}</h3>
+                <div className="price-row">
+                  <div>
+                    <strong>{f.price.toLocaleString('fa-IR')}</strong>{' '}
+                    <small>تومان / کیلو</small>
+                  </div>
+                  {f.available ? (
+                    <Link
+                      className="buy"
+                      href="/purchase"
+                      aria-label={`خرید ${f.name}`}
+                    >
+                      <ArrowUpLeft size={20} />
+                    </Link>
+                  ) : (
+                    <span className="muted">به‌زودی</span>
+                  )}
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+        {!fruits.length && (
+          <div className="empty">
+            محصولی پیدا نشد. عبارت یا دسته‌بندی دیگری را امتحان کنید.
+          </div>
+        )}
+      </section>
+      <section className="banner">
+        <div>
+          <h2>یک قدم تا انتخاب تازه‌تر</h2>
+          <p>بازار را ببینید؛ خرید آنلاین هم به‌زودی به جمع ما اضافه می‌شود.</p>
+        </div>
+        <Link className="button" href="/purchase">
+          رفتن به خرید <ArrowUpLeft size={18} />
+        </Link>
+      </section>
+    </main>
+  )
+}
