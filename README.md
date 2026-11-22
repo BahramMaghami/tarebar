@@ -1,36 +1,39 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+﻿# تره‌بار — MVP بازار میوه
 
-## Getting Started
+رابط فارسی و RTL، جستجو و دسته‌بندی، نمایش قیمت به تومان، ثبت‌نام و ورود Gmail + رمز، پنل مدیر برای افزودن/ویرایش/حذف، و صفحه موقت `/purchase`.
 
-First, run the development server:
+## اجرا
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+نیازمندی: Node.js 20.19+ (یا 22.12+) و npm.
+
+```powershell
+npm.cmd install
+Copy-Item .env.example .env
+npm.cmd run db:generate
+# در ویندوز اگر دیتابیس هنوز وجود ندارد:
+if (!(Test-Path dev.db)) { New-Item -ItemType File dev.db }
+npm.cmd run db:migrate
+npm.cmd run db:seed
+npm.cmd run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## حساب مدیر
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+در `.env` مقدار `ADMIN_EMAIL` را Gmail خود و `ADMIN_PASSWORD` را رمز حداقل ۱۲ کاراکتری قرار دهید، سپس `npm.cmd run db:seed` را اجرا کنید. این دستور حساب مدیر را ایجاد می‌کند یا رمز همان حساب را تغییر می‌دهد. پس از ساخت مدیر، رمز را از `.env` حذف کنید. ورود از `/login` و مدیریت از `/admin` است. کاربران ثبت‌نام‌شده همواره نقش USER دارند.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+این ورود از نوع credentials است؛ ارسال ایمیل، تأیید مالکیت Gmail، OAuth و بازیابی رمز در این MVP پیاده نشده‌اند. مرور بازار عمومی است.
 
-## Learn More
+## داده و زیرساخت
 
-To learn more about Next.js, take a look at the following resources:
+Prisma 7 با adapter رسمی better-sqlite3، SQLite محلی در `dev.db`، migration ثبت‌شده و seed غیرتکراری. قیمت‌ها و محصولات اولیه صرفاً نمایشی‌اند. تصاویر از Unsplash دریافت می‌شوند. عملیات نوشتن با Next.js Server Actions و بررسی دسترسی مدیر اجرا می‌شوند. رمزها با scrypt هش و sessionهای تصادفی به‌صورت هش در دیتابیس ذخیره می‌شوند.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+برای استقرار SQLite به دیسک ماندگار و یک instance نیاز است؛ برای استقرار چند instance یا serverless دیتابیس اشتراکی انتخاب کنید. در production کوکی secure به HTTPS نیاز دارد.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## بررسی
 
-## Deploy on Vercel
+```powershell
+npm.cmd run lint
+npm.cmd run build
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+راهنمای طراحی محلی: `.agents/skills/ui-ux-pro-max/SKILL.md`؛ سبک ساده، رنگ سبز، کنترل‌های قابل استفاده با کیبورد و چیدمان واکنش‌گرا.
